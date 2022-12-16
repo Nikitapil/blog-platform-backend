@@ -23,6 +23,10 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
 
+    @ApiProperty({example: 'test user', description: 'user name'})
+    @Column({type: DataType.STRING, allowNull: false})
+    userName: string;
+
     @ApiProperty({example: 'true', description: 'Is user banned'})
     @Column({type: DataType.BOOLEAN, defaultValue: false})
     banned: boolean;

@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs'
 import {User} from "../users/users.model";
 import {InjectModel} from "@nestjs/sequelize";
 import {Token} from "./token.model";
+import {LoginUserDto} from "../users/dto/login-user-dto";
 @Injectable()
 export class AuthService {
 
@@ -15,7 +16,7 @@ export class AuthService {
     ) {
     }
 
-    async login(userDto: CreateUserDto) {
+    async login(userDto: LoginUserDto) {
         const user = await this.validateUser(userDto)
         const userData = await this.generateToken(user)
         await this.saveToken(userData.user.id, userData.refreshToken)
@@ -41,7 +42,7 @@ export class AuthService {
 
     async generateToken(user: User) {
         const payload = {email: user.email, id: user.id, roles: user.roles, banned: user.banned}
-        const userData = {...payload, banReason: user.banReason}
+        const userData = {...payload, banReason: user.banReason, userName: user.userName}
         return {
             accessToken: this.jwtService.sign(payload, {
                 secret: process.env.ACCESS_SECRET,
@@ -55,7 +56,7 @@ export class AuthService {
         }
     }
 
-    private async validateUser(userDto: CreateUserDto) {
+    private async validateUser(userDto: LoginUserDto) {
         const user = await this.userService.getUserByEmail(userDto.email)
         if (!user) {
             throw new UnauthorizedException({message: 'Incorrect email or password'})

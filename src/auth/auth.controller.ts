@@ -2,6 +2,7 @@ import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
 import {ApiTags} from "@nestjs/swagger";
 import {CreateUserDto} from "../users/dto/create-user.dto.ts/create-user.dto";
 import {AuthService} from "./auth.service";
+import {LoginUserDto} from "../users/dto/login-user-dto";
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -11,7 +12,7 @@ export class AuthController {
     }
 
     @Post('/login')
-    async login(@Body() userDto: CreateUserDto, @Res() res) {
+    async login(@Body() userDto: LoginUserDto, @Res() res) {
         const userData = await this.authService.login(userDto)
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 *1000, httpOnly:true})
         return res.json(userData)
