@@ -4,15 +4,22 @@ import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from 'bcryptjs'
 import {User} from "../users/users.model";
+import {InjectModel} from "@nestjs/sequelize";
+import {Token} from "./token.model";
 @Injectable()
 export class AuthService {
 
-    constructor(private userService: UsersService, private jwtService: JwtService) {
+    constructor(private userService: UsersService,
+                private jwtService: JwtService,
+                @InjectModel(Token) private tokenRepository: typeof Token
+    ) {
     }
 
     async login(userDto: CreateUserDto) {
         const user = await this.validateUser(userDto)
-        return this.generateToken(user)
+        const userData = await this.generateToken(user)
+        await this.saveToken(userData.user.id, userData.refreshToken)
+        return userData
     }
 
     async registration(userDto: CreateUserDto) {
@@ -22,13 +29,29 @@ export class AuthService {
         }
         const hashPassword = await bcrypt.hash(userDto.password, 5)
         const user = await this.userService.createUser({...userDto, password: hashPassword})
-        return this.generateToken(user)
+        const userData = await this.generateToken(user)
+        await this.saveToken(userData.user.id, userData.refreshToken)
+        return userData
+    }
+
+    async logOut(refreshToken) {
+        await this.tokenRepository.destroy({where: {token: refreshToken}})
+        return refreshToken
     }
 
     async generateToken(user: User) {
-        const payload = {email: user.email, id: user.id, roles: user.roles}
+        const payload = {email: user.email, id: user.id, roles: user.roles, banned: user.banned}
+        const userData = {...payload, banReason: user.banReason}
         return {
-            token: this.jwtService.sign(payload)
+            accessToken: this.jwtService.sign(payload, {
+                secret: process.env.ACCESS_SECRET,
+                expiresIn: '15m'
+            }),
+            refreshToken: this.jwtService.sign(payload, {
+                secret: process.env.REFRESH_SECRET,
+                expiresIn: '30d'
+            }),
+            user: userData
         }
     }
 
@@ -42,5 +65,31 @@ export class AuthService {
             return user
         }
         throw new UnauthorizedException({message: 'Incorrect email or password'})
+    }
+
+    async saveToken(userId, refreshToken: string) {
+        const tokenData = await this.tokenRepository.findOne({where: { userId }})
+        if (tokenData) {
+            await tokenData.update({token: refreshToken})
+            return
+        }
+        await this.tokenRepository.create({userId,  token: refreshToken})
+    }
+
+    async refresh(refreshToken: string) {
+        if (!refreshToken) {
+            throw new UnauthorizedException({message: 'Unauthorized'})
+        }
+        const userData = await this.jwtService.verify(refreshToken, {secret: process.env.REFRESH_SECRET})
+        const tokenFromDb = await this.tokenRepository.findOne({where: { token: refreshToken }})
+
+        if (!userData || !tokenFromDb) {
+            throw new UnauthorizedException({message: 'Unauthorized'})
+        }
+
+        const user = await this.userService.getUserByEmail(userData.email)
+        const responseData = await this.generateToken(user)
+        await this.saveToken(user.id, responseData.refreshToken)
+        return responseData
     }
 }
