@@ -81,16 +81,21 @@ export class AuthService {
         if (!refreshToken) {
             throw new UnauthorizedException({message: 'Unauthorized'})
         }
-        const userData = await this.jwtService.verify(refreshToken, {secret: process.env.REFRESH_SECRET})
-        const tokenFromDb = await this.tokenRepository.findOne({where: { token: refreshToken }})
+        try {
+            const userData = await this.jwtService.verify(refreshToken, {secret: process.env.REFRESH_SECRET})
+            const tokenFromDb = await this.tokenRepository.findOne({where: { token: refreshToken }})
 
-        if (!userData || !tokenFromDb) {
+            if (!userData || !tokenFromDb) {
+                throw new UnauthorizedException({message: 'Unauthorized'})
+            }
+
+            const user = await this.userService.getUserByEmail(userData.email)
+            const responseData = await this.generateToken(user)
+            await this.saveToken(user.id, responseData.refreshToken)
+            return responseData
+        } catch (e) {
             throw new UnauthorizedException({message: 'Unauthorized'})
         }
 
-        const user = await this.userService.getUserByEmail(userData.email)
-        const responseData = await this.generateToken(user)
-        await this.saveToken(user.id, responseData.refreshToken)
-        return responseData
     }
 }
