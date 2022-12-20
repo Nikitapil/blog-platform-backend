@@ -19,4 +19,17 @@ export class FilesService {
         }
     }
 
+    async updateFile(file, fileName) {
+        try {
+            const fileDirPath = path.resolve(__dirname, '..', 'static')
+            if (!fs.existsSync(fileDirPath)) {
+                fs.mkdirSync(fileDirPath, {recursive: true})
+            }
+            fs.writeFileSync(path.join(fileDirPath, fileName), file.buffer)
+            return fileName
+        } catch (e) {
+            throw new HttpException('Error in writing file', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 }

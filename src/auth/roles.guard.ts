@@ -31,12 +31,11 @@ export class RolesGuard implements CanActivate {
             const authHeader = req.headers.authorization
             const bearer = authHeader.split(' ')[0]
             const token = authHeader.split(' ')[1]
-            console.log(token, 'token')
             if (bearer !== 'Bearer' || !token) {
                 throw new UnauthorizedException({message: 'User unauthorized'})
             }
 
-            const user =  this.jwtService.verify(token)
+            const user =  this.jwtService.verify(token, {secret: process.env.ACCESS_SECRET})
             req.user = user
             return user.roles.some(role => requiredRoles.includes(role.value))
         } catch (e) {
