@@ -4,6 +4,7 @@ import {InjectModel} from "@nestjs/sequelize";
 import {Post} from "./post.model";
 import {FilesService} from "../files/files.service";
 import {EditPostDto} from "./dto/edit-post-dto";
+import {ReturnPostDto} from "./dto/return-post-dto";
 
 @Injectable()
 export class PostsService {
@@ -21,8 +22,8 @@ export class PostsService {
     }
 
     async getPosts() {
-        const posts = await this.postRepository.findAll()
-        return posts
+        const posts = await this.postRepository.findAll({include: {all: true}})
+        return posts.map(post => new ReturnPostDto(post))
     }
 
     async edit(dto: EditPostDto, image) {
@@ -48,5 +49,14 @@ export class PostsService {
         }
         await this.postRepository.destroy({where: {id}})
         return null
+    }
+
+    async getSinglePost(id: number) {
+        const post = await this.postRepository.findOne({where: {id}, include: {all: true}})
+        if (!post) {
+            throw new NotFoundException({message: 'Post not found'})
+        }
+        const response = new ReturnPostDto(post)
+        return {...response}
     }
 }

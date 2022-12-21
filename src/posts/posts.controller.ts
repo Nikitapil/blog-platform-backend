@@ -51,4 +51,9 @@ export class PostsController {
     deletePost(@Param('id') id: string, @Req() req) {
         return this.postService.delete(+id, req.user.id)
     }
+
+    @Get('/:id')
+    getSinglePost(@Param('id') id: string) {
+        return this.postService.getSinglePost(+id)
+    }
 }
