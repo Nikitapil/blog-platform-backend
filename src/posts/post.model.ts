@@ -16,7 +16,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     title: string;
 
-    @Column({type: DataType.STRING, allowNull: false})
+    @Column({type: DataType.STRING(1000000), allowNull: false})
     content: string;
 
     @Column({type: DataType.STRING, allowNull: true})
