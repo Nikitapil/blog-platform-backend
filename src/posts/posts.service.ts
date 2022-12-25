@@ -31,6 +31,9 @@ export class PostsService {
         if (!post) {
             throw new NotFoundException({message: 'Post not found'})
         }
+        if (post.userId !== +dto.userId) {
+            throw new ForbiddenException({message: 'UserId is not equal'})
+        }
         let fileName = ''
         if (image) {
             fileName = await this.fileService.updateFile(image, dto.imageName)
