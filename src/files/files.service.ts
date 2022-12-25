@@ -21,12 +21,16 @@ export class FilesService {
 
     async updateFile(file, fileName) {
         try {
+            let name = fileName
+            if (!name) {
+                name = uuid.v4() + '.jpg'
+            }
             const fileDirPath = path.resolve(__dirname, '..', 'static')
             if (!fs.existsSync(fileDirPath)) {
                 fs.mkdirSync(fileDirPath, {recursive: true})
             }
-            fs.writeFileSync(path.join(fileDirPath, fileName), file.buffer)
-            return fileName
+            fs.writeFileSync(path.join(fileDirPath, name), file.buffer)
+            return name
         } catch (e) {
             throw new HttpException('Error in writing file', HttpStatus.INTERNAL_SERVER_ERROR)
         }
