@@ -32,4 +32,13 @@ export class FilesService {
         }
     }
 
+    async deleteFile(link: string) {
+        try {
+            const filePath = path.join(__dirname, '..', 'static', link)
+            fs.unlinkSync(filePath)
+        } catch (e) {
+            throw new HttpException('Error in writing file', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 }

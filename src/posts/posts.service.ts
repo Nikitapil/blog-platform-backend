@@ -48,6 +48,7 @@ export class PostsService {
             throw new ForbiddenException({message: 'Forbidden'})
         }
         await this.postRepository.destroy({where: {id}})
+        await this.fileService.deleteFile(post.image)
         return null
     }
 

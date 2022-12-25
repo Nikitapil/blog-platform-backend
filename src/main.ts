@@ -13,7 +13,7 @@ async function start() {
         origin: [
             'http://localhost:3000',
         ],
-        methods: ["GET", "POST"],
+        methods: ["GET", "POST", "DELETE", "PUT"],
         credentials: true,
     });
 
