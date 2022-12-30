@@ -34,6 +34,9 @@ export class PostsService {
         if (post.userId !== +dto.userId) {
             throw new ForbiddenException({message: 'UserId is not equal'})
         }
+        if (post.image && !image) {
+            await this.fileService.deleteFile(post.image)
+        }
         let fileName = ''
         if (image) {
             fileName = await this.fileService.updateFile(image, dto.imageName)
