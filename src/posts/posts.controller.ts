@@ -3,7 +3,7 @@ import {
     Controller, Delete,
     ForbiddenException,
     Get, Param,
-    Post, Put,
+    Post, Put, Query,
     Req,
     UploadedFile,
     UseGuards,
@@ -42,8 +42,9 @@ export class PostsController {
     }
 
     @Get()
-    getPosts() {
-        return this.postService.getPosts()
+    getPosts(@Query() query) {
+        const page = +query.page || 1
+        return this.postService.getPosts(page)
     }
 
     @Delete('/:id')

@@ -21,9 +21,13 @@ export class PostsService {
         return post;
     }
 
-    async getPosts() {
-        const posts = await this.postRepository.findAll({include: {all: true}})
-        return posts.map(post => new ReturnPostDto(post))
+    async getPosts(page = 1, limit = 10) {
+        const offset = page * limit - limit
+        const posts = await this.postRepository.findAndCountAll({include: {all: true}, limit, offset})
+        return {
+            count: posts.count,
+            posts: posts.rows.map(post => new ReturnPostDto(post))
+        }
     }
 
     async edit(dto: EditPostDto, image) {

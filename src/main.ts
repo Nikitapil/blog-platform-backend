@@ -18,10 +18,9 @@ async function start() {
     });
 
     const config = new DocumentBuilder()
-        .setTitle('Pro backend course')
+        .setTitle('Blog platform')
         .setDescription('Rest Api documentation')
         .setVersion('1.0.0')
-        .addTag('UlBI course')
         .build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('/api/docs', app, document)
