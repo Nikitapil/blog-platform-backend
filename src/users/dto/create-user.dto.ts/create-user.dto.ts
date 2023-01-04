@@ -11,6 +11,6 @@ export class CreateUserDto {
     @ApiProperty({example: '12345', description: 'user password'})
     readonly password: string;
     @IsString({message: 'userName must be string value'})
-    @ApiProperty({example: '12345', description: 'user password'})
+    @ApiProperty({example: 'Nick', description: 'user name'})
     readonly userName: string;
 }
