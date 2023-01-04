@@ -6,6 +6,7 @@ export class LoginUserDto {
     @IsString({message: 'email must be string value'})
     @IsEmail({}, {message: 'Incorrect email'})
     readonly email: string;
+
     @IsString({message: 'password must be string value'})
     @Length(4, 16, {message: 'Password length must be between 4 and 16'})
     @ApiProperty({example: '12345', description: 'user password'})

@@ -1,13 +1,22 @@
 import {Post} from "../post.model";
+import {ApiProperty} from "@nestjs/swagger";
 
 export class ReturnPostDto {
+    @ApiProperty({example: '1', description: 'Post id'})
     id;
+    @ApiProperty({example: 'My first post', description: 'Post title'})
     title;
+    @ApiProperty({example: 'Lorem ipsum...', description: 'Post content'})
     content;
+    @ApiProperty({example: '123-123.jpg', description: 'Post cover link'})
     image;
+    @ApiProperty({example: '1', description: 'Post author id'})
     userId;
+    @ApiProperty({example: '2023-01-04T12:32:38.220Z', description: 'Post creation date'})
     createdAt;
+    @ApiProperty({example: '2023-01-04T12:32:38.220Z', description: 'Post editing date'})
     updatedAt;
+    @ApiProperty({example: 'Nick', description: 'Post author name'})
     author;
     constructor(post: Post) {
         this.id = post.id;

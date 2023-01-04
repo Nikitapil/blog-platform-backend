@@ -14,13 +14,19 @@ import {PostsService} from "./posts.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {JwtAuthGuard} from "../auth/jwt.auth.guard";
 import {EditPostDto} from "./dto/edit-post-dto";
+import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {Post as PostModel} from "./post.model";
+import {ReturnPostDto} from "./dto/return-post-dto";
 
+@ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
 
     constructor(private postService: PostsService) {
     }
 
+    @ApiOperation({summary: 'Creating post'})
+    @ApiResponse({status: 200, type: PostModel})
     @Post()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
@@ -31,6 +37,8 @@ export class PostsController {
         return this.postService.create(dto, image)
     }
 
+    @ApiOperation({summary: 'Edit post'})
+    @ApiResponse({status: 200, type: PostModel})
     @Put()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
@@ -41,17 +49,23 @@ export class PostsController {
         return this.postService.edit(dto, image)
     }
 
+    @ApiOperation({summary: 'Get all posts'})
+    @ApiResponse({status: 200, type: [ReturnPostDto]})
     @Get()
     getPosts(@Query() query) {
         const page = +query.page || 1
         return this.postService.getPosts(page)
     }
 
+    @ApiOperation({summary: 'Delete post'})
     @Delete('/:id')
     @UseGuards(JwtAuthGuard)
     deletePost(@Param('id') id: string, @Req() req) {
         return this.postService.delete(+id, req.user.id)
     }
+
+    @ApiOperation({summary: 'Get single post'})
+    @ApiResponse({status: 200, type: ReturnPostDto})
 
     @Get('/:id')
     getSinglePost(@Param('id') id: string) {
