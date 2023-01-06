@@ -17,6 +17,8 @@ import {EditPostDto} from "./dto/edit-post-dto";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Post as PostModel} from "./post.model";
 import {ReturnPostDto} from "./dto/return-post-dto";
+import {AddLikeDto} from "./dto/add-like.dto";
+import {Like} from "./like.model";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -72,5 +74,32 @@ export class PostsController {
     @Get('/:id')
     getSinglePost(@Param('id') id: string) {
         return this.postService.getSinglePost(+id)
+    }
+
+    @ApiOperation({summary: 'Add like'})
+    @ApiResponse({status: 200, type: [Like]})
+    @Post('/like')
+    @UseGuards(JwtAuthGuard)
+    addLike(@Body() dto: AddLikeDto, @Req() req) {
+        if (req.user.id !== +dto.userId) {
+            throw new ForbiddenException({message: 'UserId is not equal'})
+        }
+        return this.postService.addLike(dto)
+    }
+
+    @ApiOperation({summary: 'Delete like'})
+    @ApiResponse({status: 200, type: [Like]})
+    @Delete('/like/:postId')
+    @UseGuards(JwtAuthGuard)
+    deleteLike(@Param('postId') postId: string, @Req() req) {
+        return this.postService.deleteLike({postId: +postId, userId: req.user.id})
+    }
+
+    @ApiOperation({summary: 'Get post likes'})
+    @ApiResponse({status: 200, type: [Like]})
+    @Get('/like/:postId')
+    @UseGuards(JwtAuthGuard)
+    getPostLikes(@Param('postId') postId: string) {
+        return this.postService.getPostLikes(+postId)
     }
 }

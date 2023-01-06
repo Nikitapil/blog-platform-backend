@@ -6,12 +6,17 @@ import {FilesService} from "../files/files.service";
 import {EditPostDto} from "./dto/edit-post-dto";
 import {ReturnPostDto} from "./dto/return-post-dto";
 import {Op} from "sequelize";
+import {AddLikeDto} from "./dto/add-like.dto";
+import {Like} from "./like.model";
 
 @Injectable()
 export class PostsService {
 
-    constructor(@InjectModel(Post) private postRepository: typeof Post, private fileService: FilesService) {
-    }
+    constructor(
+        @InjectModel(Post) private postRepository: typeof Post,
+        @InjectModel(Like) private likeRepository: typeof Like,
+        private fileService: FilesService,
+    ) {}
 
     async create(dto: CreatePostDto, image: any) {
         let fileName = ''
@@ -26,7 +31,7 @@ export class PostsService {
         const offset = page * limit - limit
         const posts = await this.postRepository.findAndCountAll({include: {all: true}, limit, offset, where: {
          title: {[Op.iLike]: `%${search}%`}
-            }})
+            }, order: [['updatedAt', 'DESC']]})
         return {
             count: posts.count,
             posts: posts.rows.map(post => new ReturnPostDto(post))
@@ -72,5 +77,30 @@ export class PostsService {
         }
         const response = new ReturnPostDto(post)
         return {...response}
+    }
+
+    async addLike(dto: AddLikeDto) {
+        const candidate = await this.likeRepository.findOne({where: {userId: dto.userId, postId: dto.postId}})
+        if (candidate) {
+            throw new ForbiddenException({message: 'Like already exists'})
+        }
+        await this.likeRepository.create({...dto})
+        const likes = await this.likeRepository.findAndCountAll({where: {postId: dto.postId}})
+        return likes
+    }
+
+    async deleteLike(dto: AddLikeDto) {
+        const like = await this.likeRepository.findOne({where: {userId: dto.userId, postId: dto.postId}})
+        if (!like) {
+            throw new NotFoundException({message: 'Like not found'})
+        }
+        await like.destroy()
+        const likes = await this.likeRepository.findAndCountAll({where: {postId: dto.postId}})
+        return likes
+    }
+
+    async getPostLikes(postId: number) {
+        const likes = await this.likeRepository.findAndCountAll({where: {postId}})
+        return likes
     }
 }

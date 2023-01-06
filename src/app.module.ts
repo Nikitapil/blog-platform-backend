@@ -13,6 +13,7 @@ import { FilesModule } from './files/files.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
 import * as path from 'path'
 import {Token} from "./auth/token.model";
+import {Like} from "./posts/like.model";
 @Module({
     controllers: [],
     providers: [],
@@ -30,7 +31,7 @@ import {Token} from "./auth/token.model";
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRoles, Post, Token],
+            models: [User, Role, UserRoles, Post, Token, Like],
             autoLoadModels: true
         }),
         UsersModule,

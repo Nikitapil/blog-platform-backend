@@ -1,6 +1,7 @@
-import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import {User} from "../users/users.model";
 import {ApiProperty} from "@nestjs/swagger";
+import {Like} from "./like.model";
 
 interface PostCreationAttrs {
     title: string;
@@ -34,4 +35,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
 
     @BelongsTo(() => User)
     author: User
+
+    @HasMany(() => Like)
+    likes: Like[]
 }

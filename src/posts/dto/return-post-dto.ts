@@ -18,6 +18,8 @@ export class ReturnPostDto {
     updatedAt;
     @ApiProperty({example: 'Nick', description: 'Post author name'})
     author;
+    @ApiProperty({example: 10, description: 'Post likes count'})
+    likesCount;
     constructor(post: Post) {
         this.id = post.id;
         this.title = post.title;
@@ -27,5 +29,6 @@ export class ReturnPostDto {
         this.createdAt = post.createdAt;
         this.updatedAt = post.updatedAt;
         this.author = post.author.userName;
+        this.likesCount = post.likes.length;
     }
 }
