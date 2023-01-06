@@ -5,6 +5,7 @@ import {Post} from "./post.model";
 import {FilesService} from "../files/files.service";
 import {EditPostDto} from "./dto/edit-post-dto";
 import {ReturnPostDto} from "./dto/return-post-dto";
+import {Op} from "sequelize";
 
 @Injectable()
 export class PostsService {
@@ -21,9 +22,11 @@ export class PostsService {
         return post;
     }
 
-    async getPosts(page = 1, limit = 10) {
+    async getPosts(page = 1, limit = 10, search) {
         const offset = page * limit - limit
-        const posts = await this.postRepository.findAndCountAll({include: {all: true}, limit, offset})
+        const posts = await this.postRepository.findAndCountAll({include: {all: true}, limit, offset, where: {
+         title: {[Op.iLike]: `%${search}%`}
+            }})
         return {
             count: posts.count,
             posts: posts.rows.map(post => new ReturnPostDto(post))

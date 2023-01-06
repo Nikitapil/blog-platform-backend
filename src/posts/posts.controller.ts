@@ -54,7 +54,9 @@ export class PostsController {
     @Get()
     getPosts(@Query() query) {
         const page = +query.page || 1
-        return this.postService.getPosts(page)
+        const limit = query.limit || 10
+        const search = query.search || ''
+        return this.postService.getPosts(page, limit, search)
     }
 
     @ApiOperation({summary: 'Delete post'})
