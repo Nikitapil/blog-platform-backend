@@ -101,6 +101,9 @@ export class PostsService {
 
     async getPostLikes(postId: number) {
         const likes = await this.likeRepository.findAndCountAll({where: {postId}})
+        if (!likes) {
+            throw new NotFoundException({message: 'Likes not found'})
+        }
         return likes
     }
 }

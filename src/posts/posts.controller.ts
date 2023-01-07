@@ -98,7 +98,6 @@ export class PostsController {
     @ApiOperation({summary: 'Get post likes'})
     @ApiResponse({status: 200, type: [Like]})
     @Get('/like/:postId')
-    @UseGuards(JwtAuthGuard)
     getPostLikes(@Param('postId') postId: string) {
         return this.postService.getPostLikes(+postId)
     }
