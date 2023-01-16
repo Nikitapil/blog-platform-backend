@@ -2,6 +2,7 @@ import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "se
 import {User} from "../users/users.model";
 import {ApiProperty} from "@nestjs/swagger";
 import {Like} from "./like.model";
+import {Comment} from "./comment.model";
 
 interface PostCreationAttrs {
     title: string;
@@ -38,4 +39,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
 
     @HasMany(() => Like)
     likes: Like[]
+
+    @HasMany(() => Comment)
+    comments: Comment[]
 }

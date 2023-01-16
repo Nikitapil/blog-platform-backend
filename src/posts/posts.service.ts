@@ -8,6 +8,10 @@ import {ReturnPostDto} from "./dto/return-post-dto";
 import {Op} from "sequelize";
 import {AddLikeDto} from "./dto/add-like.dto";
 import {Like} from "./like.model";
+import {AddCommentDto} from "./dto/add-comment.dto";
+import {Comment} from "./comment.model";
+import {ReturnCommentDto} from "./dto/return-comment.dto";
+import {EditCommentDto} from "./dto/edit-comment.dto";
 
 @Injectable()
 export class PostsService {
@@ -15,6 +19,7 @@ export class PostsService {
     constructor(
         @InjectModel(Post) private postRepository: typeof Post,
         @InjectModel(Like) private likeRepository: typeof Like,
+        @InjectModel(Comment) private commentRepository: typeof Comment,
         private fileService: FilesService,
     ) {}
 
@@ -105,5 +110,52 @@ export class PostsService {
             throw new NotFoundException({message: 'Likes not found'})
         }
         return likes
+    }
+
+    async addComment(dto: AddCommentDto) {
+        await this.commentRepository.create({...dto})
+        const comments = await this.commentRepository.findAndCountAll({
+            include: {all: true},
+            order: [['updatedAt', 'DESC']]
+        })
+        return {
+            count: comments.count,
+            comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
+
+    async getPostComments(postId: number) {
+        const comments = await this.commentRepository.findAndCountAll({
+            where: {postId},
+            include: {all: true},
+            order: [['createdAt', 'DESC']]
+        })
+        if (!comments) {
+            throw new NotFoundException({message: 'Comments not found'})
+        }
+        return {
+            count: comments.count,
+            comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
+
+    async editComment(dto: EditCommentDto, userId: number) {
+        const comment = await this.commentRepository.findOne({where: {id: +dto.id}})
+        if (!comment) {
+            throw new NotFoundException({message: 'Comment not found'})
+        }
+        if (comment.userId !== userId) {
+            throw new ForbiddenException({message: 'UserId is not equal'})
+        }
+        await comment.update({text: dto.text})
+        const comments = await this.commentRepository.findAndCountAll({
+            where: {postId: comment.postId},
+            include: {all: true},
+            order: [['updatedAt', 'DESC']]
+        })
+        return {
+            count: comments.count,
+            comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
     }
 }

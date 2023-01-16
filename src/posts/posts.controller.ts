@@ -19,6 +19,9 @@ import {Post as PostModel} from "./post.model";
 import {ReturnPostDto} from "./dto/return-post-dto";
 import {AddLikeDto} from "./dto/add-like.dto";
 import {Like} from "./like.model";
+import {AddCommentDto} from "./dto/add-comment.dto";
+import {Comment} from "./comment.model";
+import {EditCommentDto} from "./dto/edit-comment.dto";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -100,5 +103,29 @@ export class PostsController {
     @Get('/like/:postId')
     getPostLikes(@Param('postId') postId: string) {
         return this.postService.getPostLikes(+postId)
+    }
+
+    @ApiOperation({summary: 'Create new comment to post'})
+    @ApiResponse({status: 200, type: [Comment]})
+    @Post('/comment')
+    @UseGuards(JwtAuthGuard)
+    addComment(@Body() dto: AddCommentDto, @Req() req) {
+        if (req.user.id !== +dto.userId) {
+            throw new ForbiddenException({message: 'UserId is not equal'})
+        }
+        return this.postService.addComment(dto)
+    }
+
+    @ApiOperation({summary: 'get post comments'})
+    @ApiResponse({status: 200, type: [Comment]})
+    @Get('/comment/:postId')
+    getPostComments(@Param('postId') postId: string) {
+        return this.postService.getPostComments(+postId)
+    }
+
+    @Put('/comment')
+    @UseGuards(JwtAuthGuard)
+    editComment(@Body() dto: EditCommentDto, @Req() req) {
+        return this.postService.editComment(dto, req.user.id)
     }
 }
