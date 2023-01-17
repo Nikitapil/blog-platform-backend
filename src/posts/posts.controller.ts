@@ -123,9 +123,19 @@ export class PostsController {
         return this.postService.getPostComments(+postId)
     }
 
+    @ApiOperation({summary: 'edit post comment'})
+    @ApiResponse({status: 200, type: [Comment]})
     @Put('/comment')
     @UseGuards(JwtAuthGuard)
     editComment(@Body() dto: EditCommentDto, @Req() req) {
         return this.postService.editComment(dto, req.user.id)
+    }
+
+    @ApiOperation({summary: 'edit post comment'})
+    @ApiResponse({status: 200, type: [Comment]})
+    @Delete('/comment/:commentId')
+    @UseGuards(JwtAuthGuard)
+    deleteComment(@Param('commentId') commentId: string, @Req() req) {
+        return this.postService.deleteComment(+commentId, req.user.id)
     }
 }

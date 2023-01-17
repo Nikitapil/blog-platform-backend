@@ -115,6 +115,7 @@ export class PostsService {
     async addComment(dto: AddCommentDto) {
         await this.commentRepository.create({...dto})
         const comments = await this.commentRepository.findAndCountAll({
+            where: {postId: dto.postId},
             include: {all: true},
             order: [['updatedAt', 'DESC']]
         })
@@ -148,6 +149,26 @@ export class PostsService {
             throw new ForbiddenException({message: 'UserId is not equal'})
         }
         await comment.update({text: dto.text})
+        const comments = await this.commentRepository.findAndCountAll({
+            where: {postId: comment.postId},
+            include: {all: true},
+            order: [['updatedAt', 'DESC']]
+        })
+        return {
+            count: comments.count,
+            comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
+
+    async deleteComment(id: number, userId: number) {
+        const comment = await this.commentRepository.findOne({where: {id}})
+        if (!comment) {
+            throw new NotFoundException({message: 'Comment not found'})
+        }
+        if (comment.userId !== userId) {
+            throw new ForbiddenException({message: 'UserId is not equal'})
+        }
+        await comment.destroy()
         const comments = await this.commentRepository.findAndCountAll({
             where: {postId: comment.postId},
             include: {all: true},
