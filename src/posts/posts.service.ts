@@ -117,7 +117,7 @@ export class PostsService {
         const comments = await this.commentRepository.findAndCountAll({
             where: {postId: dto.postId},
             include: {all: true},
-            order: [['updatedAt', 'DESC']]
+            order: [['createdAt', 'DESC']]
         })
         return {
             count: comments.count,
@@ -152,7 +152,7 @@ export class PostsService {
         const comments = await this.commentRepository.findAndCountAll({
             where: {postId: comment.postId},
             include: {all: true},
-            order: [['updatedAt', 'DESC']]
+            order: [['createdAt', 'DESC']]
         })
         return {
             count: comments.count,
@@ -172,7 +172,7 @@ export class PostsService {
         const comments = await this.commentRepository.findAndCountAll({
             where: {postId: comment.postId},
             include: {all: true},
-            order: [['updatedAt', 'DESC']]
+            order: [['createdAt', 'DESC']]
         })
         return {
             count: comments.count,
