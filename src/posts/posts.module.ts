@@ -8,12 +8,13 @@ import {FilesModule} from "../files/files.module";
 import {AuthModule} from "../auth/auth.module";
 import {Like} from "./like.model";
 import {Comment} from "./comment.model";
+import {View} from "./view.model";
 
 @Module({
   controllers: [PostsController],
   providers: [PostsService],
   imports: [
-      SequelizeModule.forFeature([User, Post, Like, Comment]),
+      SequelizeModule.forFeature([User, Post, Like, Comment, View]),
       FilesModule,
       AuthModule
   ]

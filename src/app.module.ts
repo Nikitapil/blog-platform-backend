@@ -15,6 +15,7 @@ import * as path from 'path'
 import {Token} from "./auth/token.model";
 import {Like} from "./posts/like.model";
 import {Comment} from "./posts/comment.model";
+import {View} from "./posts/view.model";
 @Module({
     controllers: [],
     providers: [],
@@ -32,7 +33,7 @@ import {Comment} from "./posts/comment.model";
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRoles, Post, Token, Like, Comment],
+            models: [User, Role, UserRoles, Post, Token, Like, Comment, View],
             autoLoadModels: true
         }),
         UsersModule,

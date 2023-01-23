@@ -12,6 +12,8 @@ import {AddCommentDto} from "./dto/add-comment.dto";
 import {Comment} from "./comment.model";
 import {ReturnCommentDto} from "./dto/return-comment.dto";
 import {EditCommentDto} from "./dto/edit-comment.dto";
+import {TUserTokenPayload} from "../types/common";
+import {View} from "./view.model";
 
 @Injectable()
 export class PostsService {
@@ -20,6 +22,7 @@ export class PostsService {
         @InjectModel(Post) private postRepository: typeof Post,
         @InjectModel(Like) private likeRepository: typeof Like,
         @InjectModel(Comment) private commentRepository: typeof Comment,
+        @InjectModel(View) private viewRepository: typeof View,
         private fileService: FilesService,
     ) {}
 
@@ -75,13 +78,23 @@ export class PostsService {
         return null
     }
 
-    async getSinglePost(id: number) {
+    async getSinglePost(id: number, user: TUserTokenPayload | null) {
         const post = await this.postRepository.findOne({where: {id}, include: {all: true}})
         if (!post) {
             throw new NotFoundException({message: 'Post not found'})
         }
+        if (user) {
+            await this.updatePostViews(id, user.id)
+        }
         const response = new ReturnPostDto(post)
         return {...response}
+    }
+
+    async updatePostViews(postId, userId: number) {
+        const candidate = await this.viewRepository.findOne({where: {postId, userId}})
+        if (!candidate) {
+            await this.viewRepository.create({userId, postId})
+        }
     }
 
     async addLike(dto: AddLikeDto) {

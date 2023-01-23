@@ -3,6 +3,7 @@ import {User} from "../users/users.model";
 import {ApiProperty} from "@nestjs/swagger";
 import {Like} from "./like.model";
 import {Comment} from "./comment.model";
+import {View} from "./view.model";
 
 interface PostCreationAttrs {
     title: string;
@@ -42,4 +43,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
 
     @HasMany(() => Comment)
     comments: Comment[]
+
+    @HasMany(() => View)
+    views: View[]
 }

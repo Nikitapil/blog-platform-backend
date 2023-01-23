@@ -5,6 +5,7 @@ import {UserRoles} from "../roles/user-roles.model";
 import {Post} from "../posts/post.model";
 import {Like} from "../posts/like.model";
 import {Comment} from "../posts/comment.model";
+import {View} from "../posts/view.model";
 
 interface UserCreationAttrs {
     email: string;
@@ -48,4 +49,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @HasMany(() => Comment)
     comments: Comment[]
+
+    @HasMany(() => View)
+    views: View[]
 }

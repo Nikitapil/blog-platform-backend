@@ -22,6 +22,8 @@ import {Like} from "./like.model";
 import {AddCommentDto} from "./dto/add-comment.dto";
 import {Comment} from "./comment.model";
 import {EditCommentDto} from "./dto/edit-comment.dto";
+import {User} from "../decorators/User.decorator";
+import {TUserTokenPayload} from "../types/common";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -75,8 +77,9 @@ export class PostsController {
     @ApiResponse({status: 200, type: ReturnPostDto})
 
     @Get('/:id')
-    getSinglePost(@Param('id') id: string) {
-        return this.postService.getSinglePost(+id)
+    getSinglePost(@Param('id') id: string, @User() user: TUserTokenPayload | null) {
+        console.log(user)
+        return this.postService.getSinglePost(+id, user)
     }
 
     @ApiOperation({summary: 'Add like'})
