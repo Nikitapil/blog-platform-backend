@@ -39,7 +39,7 @@ export class PostsService {
         const offset = page * limit - limit
         const posts = await this.postRepository.findAndCountAll({include: {all: true}, limit, offset, where: {
          title: {[Op.iLike]: `%${search}%`}
-            }, order: [['updatedAt', 'DESC']]})
+            }, order: [['updatedAt', 'DESC']], distinct: true})
         return {
             count: posts.count,
             posts: posts.rows.map(post => new ReturnPostDto(post))
