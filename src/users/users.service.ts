@@ -5,10 +5,16 @@ import {CreateUserDto} from "./dto/create-user.dto.ts/create-user.dto";
 import {RolesService} from "../roles/roles.service";
 import {AddRoleDto} from "./dto/add-role-dto";
 import {BanUserDto} from "./dto/ban-user.dto";
+import {FilesService} from "../files/files.service";
+import {UserResponseDto} from "./dto/user-response.dto";
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User) private userRepository: typeof User, private roleService: RolesService) {
+    constructor(
+        @InjectModel(User) private userRepository: typeof User,
+        private roleService: RolesService,
+        private fileService: FilesService
+    ) {
     }
 
     async createUser(dto: CreateUserDto) {
@@ -48,5 +54,16 @@ export class UsersService {
         user.banReason = dto.banReason;
         await user.save()
         return user
+    }
+
+    async updateAvatar(image, userId) {
+        const user = await this.userRepository.findByPk(userId)
+        if (!user) {
+            throw new HttpException('user not found', HttpStatus.NOT_FOUND)
+        }
+        const avatarName = user.avatar || ''
+        user.avatar = await this.fileService.updateFile(image, avatarName)
+        await user.save()
+        return {...new UserResponseDto(user)}
     }
 }

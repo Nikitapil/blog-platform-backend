@@ -7,6 +7,7 @@ import {User} from "../users/users.model";
 import {InjectModel} from "@nestjs/sequelize";
 import {Token} from "./token.model";
 import {LoginUserDto} from "../users/dto/login-user-dto";
+import {UserResponseDto} from "../users/dto/user-response.dto";
 @Injectable()
 export class AuthService {
 
@@ -52,7 +53,7 @@ export class AuthService {
                 secret: process.env.REFRESH_SECRET,
                 expiresIn: '30d'
             }),
-            user: userData
+            user: {...new UserResponseDto(user)}
         }
     }
 

@@ -7,6 +7,7 @@ export type TUserData = {
     id: number;
     roles: Role[];
     banned: boolean;
+    avatar: string | null
 }
 
 export type AuthResponse = {

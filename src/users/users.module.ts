@@ -11,6 +11,7 @@ import {Post} from "../posts/post.model";
 import {Like} from "../posts/like.model";
 import {Comment} from "../posts/comment.model";
 import {View} from "../posts/view.model";
+import {FilesModule} from "../files/files.module";
 
 @Module({
   controllers: [UsersController],
@@ -18,7 +19,8 @@ import {View} from "../posts/view.model";
   imports: [
       SequelizeModule.forFeature([User, Role, UserRoles, Post, Like, Comment, View]),
       forwardRef(() => AuthModule),
-      RolesModule
+      RolesModule,
+      FilesModule
   ],
     exports: [UsersService]
 })

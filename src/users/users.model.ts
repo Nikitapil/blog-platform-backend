@@ -38,6 +38,10 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: true})
     banReason: string;
 
+    @ApiProperty({example: '1234-5678-98888.jpg', description: 'User avatar'})
+    @Column({type: DataType.STRING, allowNull: true, defaultValue: '',})
+    avatar: string;
+
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[]
 
