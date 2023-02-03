@@ -1,4 +1,15 @@
-import {Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors, UsePipes} from '@nestjs/common';
+import {
+    Body,
+    Controller, Delete,
+    Get,
+    Post,
+    Put,
+    Req,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
+    UsePipes
+} from '@nestjs/common';
 import {CreateUserDto} from "./dto/create-user.dto.ts/create-user.dto";
 import {UsersService} from "./users.service";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -11,6 +22,7 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../auth/jwt.auth.guard";
 import {UserResponseDto} from "./dto/user-response.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
+import {UserNameDto} from "./dto/create-user.dto.ts/user-name.dto";
 
 @ApiTags('Users')
 @Controller('users')
@@ -59,7 +71,23 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Post('/update-avatar')
     @UseInterceptors(FileInterceptor('image'))
-    UpdateAvatar(@UploadedFile() image, @Req() req) {
+    updateAvatar(@UploadedFile() image, @Req() req) {
         return this.userService.updateAvatar(image, req.user?.id)
+    }
+
+    @ApiOperation({summary: 'Update Avatar'})
+    @ApiResponse({status: 200, type: UserResponseDto})
+    @UseGuards(JwtAuthGuard)
+    @Delete('/delete-avatar')
+    deleteAvatar(@Req() req) {
+        return this.userService.deleteAvatar(req.user?.id)
+    }
+
+    @ApiOperation({summary: 'Update Username'})
+    @ApiResponse({status: 200, type: UserResponseDto})
+    @UseGuards(JwtAuthGuard)
+    @Put('/update-username')
+    updateUsername(@Body() dto: UserNameDto, @Req() req) {
+        return this.userService.updateUsername(dto, req.user?.id)
     }
 }
