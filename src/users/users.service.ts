@@ -8,6 +8,8 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import {FilesService} from "../files/files.service";
 import {UserResponseDto} from "./dto/user-response.dto";
 import {UserNameDto} from "./dto/create-user.dto.ts/user-name.dto";
+import {UserPasswordDto} from "./dto/create-user.dto.ts/user-password.dto";
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -85,6 +87,21 @@ export class UsersService {
         }
         await this.fileService.deleteFile(user.avatar);
         user.avatar = null
+        await user.save()
+        return {...new UserResponseDto(user)}
+    }
+
+    async updatePassword(dto: UserPasswordDto, userId: number) {
+        const user = await this.userRepository.findByPk(userId)
+        if (!user) {
+            throw new HttpException('user not found', HttpStatus.NOT_FOUND)
+        }
+        const passwordEquals = await bcrypt.compare(dto.oldPassword, user.password)
+        if (!passwordEquals) {
+            throw new HttpException('Wrong password', HttpStatus.FORBIDDEN)
+        }
+        const newPassword = await bcrypt.hash(dto.newPassword, 5)
+        user.password = newPassword;
         await user.save()
         return {...new UserResponseDto(user)}
     }

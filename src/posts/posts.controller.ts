@@ -66,6 +66,13 @@ export class PostsController {
         return this.postService.getPosts(page, limit, search)
     }
 
+    @ApiOperation({summary: 'Get all posts by user'})
+    @ApiResponse({status: 200, type: [ReturnPostDto]})
+    @Get('/user/:id')
+    getPostsByUser(@Param('id') id: string) {
+        return this.postService.getPostsByUser(+id)
+    }
+
     @ApiOperation({summary: 'Delete post'})
     @Delete('/:id')
     @UseGuards(JwtAuthGuard)

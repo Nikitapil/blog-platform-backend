@@ -5,7 +5,7 @@ import {Post} from "./post.model";
 import {FilesService} from "../files/files.service";
 import {EditPostDto} from "./dto/edit-post-dto";
 import {ReturnPostDto} from "./dto/return-post-dto";
-import {Op} from "sequelize";
+import {Op, where} from "sequelize";
 import {AddLikeDto} from "./dto/add-like.dto";
 import {Like} from "./like.model";
 import {AddCommentDto} from "./dto/add-comment.dto";
@@ -190,6 +190,14 @@ export class PostsService {
         return {
             count: comments.count,
             comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
+
+    async getPostsByUser(userId: number) {
+        const posts = await this.postRepository.findAndCountAll({include: {all: true}, where: { userId }, distinct: true})
+        return {
+            count: posts.count,
+            posts: posts.rows.map(post => new ReturnPostDto(post))
         }
     }
 }

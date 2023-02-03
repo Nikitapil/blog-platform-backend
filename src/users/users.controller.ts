@@ -23,6 +23,8 @@ import {JwtAuthGuard} from "../auth/jwt.auth.guard";
 import {UserResponseDto} from "./dto/user-response.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {UserNameDto} from "./dto/create-user.dto.ts/user-name.dto";
+import {UserPasswordDto} from "./dto/create-user.dto.ts/user-password.dto";
+import * as bcrypt from 'bcryptjs'
 
 @ApiTags('Users')
 @Controller('users')
@@ -89,5 +91,13 @@ export class UsersController {
     @Put('/update-username')
     updateUsername(@Body() dto: UserNameDto, @Req() req) {
         return this.userService.updateUsername(dto, req.user?.id)
+    }
+
+    @ApiOperation({summary: 'Update Password'})
+    @ApiResponse({status: 200, type: UserResponseDto})
+    @UseGuards(JwtAuthGuard)
+    @Put('/update-password')
+    updatePassword(@Body() dto: UserPasswordDto, @Req() req) {
+        return this.userService.updatePassword(dto, req.user?.id)
     }
 }
