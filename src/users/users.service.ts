@@ -10,6 +10,7 @@ import {UserResponseDto} from "./dto/user-response.dto";
 import {UserNameDto} from "./dto/create-user.dto.ts/user-name.dto";
 import {UserPasswordDto} from "./dto/create-user.dto.ts/user-password.dto";
 import * as bcrypt from 'bcryptjs';
+import {ProfileUserDto} from "./dto/create-user.dto.ts/profile-user-dto";
 
 @Injectable()
 export class UsersService {
@@ -104,5 +105,13 @@ export class UsersService {
         user.password = newPassword;
         await user.save()
         return {...new UserResponseDto(user)}
+    }
+
+    async getUser(id: number) {
+        const user = await this.userRepository.findByPk(id)
+        if (!user) {
+            throw new HttpException('user not found', HttpStatus.NOT_FOUND)
+        }
+        return {...new ProfileUserDto(user)}
     }
 }

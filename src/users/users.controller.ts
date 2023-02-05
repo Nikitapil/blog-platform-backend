@@ -1,7 +1,7 @@
 import {
     Body,
     Controller, Delete,
-    Get,
+    Get, Param,
     Post,
     Put,
     Req,
@@ -48,6 +48,13 @@ export class UsersController {
     @Get()
     getAll() {
         return this.userService.getAllUsers()
+    }
+
+    @ApiOperation({summary: 'Get single users'})
+    @ApiResponse({status: 200, type: User})
+    @Get('/:id')
+    getUser(@Param('id') id: string) {
+        return this.userService.getUser(+id)
     }
 
     @ApiOperation({summary: 'add role to user'})
