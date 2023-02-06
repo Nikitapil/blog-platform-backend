@@ -73,6 +73,14 @@ export class PostsController {
         return this.postService.getPostsByUser(+id)
     }
 
+    @ApiOperation({summary: 'Get all posts by user likes'})
+    @ApiResponse({status: 200, type: [ReturnPostDto]})
+    @Get('/user/likes/:id')
+    getPostsByUserLikes(@Param('id') id: string) {
+        console.log(id)
+        return this.postService.getPostsByUserLikes(+id)
+    }
+
     @ApiOperation({summary: 'Delete post'})
     @Delete('/:id')
     @UseGuards(JwtAuthGuard)

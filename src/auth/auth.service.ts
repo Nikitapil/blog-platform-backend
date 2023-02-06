@@ -43,7 +43,6 @@ export class AuthService {
 
     async generateToken(user: User) {
         const payload = {email: user.email, id: user.id, roles: user.roles, banned: user.banned}
-        const userData = {...payload, banReason: user.banReason, userName: user.userName}
         return {
             accessToken: this.jwtService.sign(payload, {
                 secret: process.env.ACCESS_SECRET,
@@ -90,7 +89,7 @@ export class AuthService {
                 throw new UnauthorizedException({message: 'Unauthorized'})
             }
 
-            const user = await this.userService.getUserByEmail(userData.email)
+            const user = await this.userService.getUserById(userData.id)
             const responseData = await this.generateToken(user)
             await this.saveToken(user.id, responseData.refreshToken)
             return responseData

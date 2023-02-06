@@ -24,7 +24,7 @@ import {UserResponseDto} from "./dto/user-response.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {UserNameDto} from "./dto/create-user.dto.ts/user-name.dto";
 import {UserPasswordDto} from "./dto/create-user.dto.ts/user-password.dto";
-import * as bcrypt from 'bcryptjs'
+import {UserEmailDto} from "./dto/create-user.dto.ts/user-email.dto";
 
 @ApiTags('Users')
 @Controller('users')
@@ -95,6 +95,7 @@ export class UsersController {
     @ApiOperation({summary: 'Update Username'})
     @ApiResponse({status: 200, type: UserResponseDto})
     @UseGuards(JwtAuthGuard)
+    @UsePipes(ValidationPipe)
     @Put('/update-username')
     updateUsername(@Body() dto: UserNameDto, @Req() req) {
         return this.userService.updateUsername(dto, req.user?.id)
@@ -103,8 +104,18 @@ export class UsersController {
     @ApiOperation({summary: 'Update Password'})
     @ApiResponse({status: 200, type: UserResponseDto})
     @UseGuards(JwtAuthGuard)
+    @UsePipes(ValidationPipe)
     @Put('/update-password')
     updatePassword(@Body() dto: UserPasswordDto, @Req() req) {
         return this.userService.updatePassword(dto, req.user?.id)
+    }
+
+    @ApiOperation({summary: 'Update Password'})
+    @ApiResponse({status: 200, type: UserResponseDto})
+    @UseGuards(JwtAuthGuard)
+    @UsePipes(ValidationPipe)
+    @Put('/update-email')
+    updateEmail(@Body() dto: UserEmailDto, @Req() req) {
+        return this.userService.updateEmail(dto.email, req.user?.id)
     }
 }

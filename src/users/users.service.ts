@@ -17,7 +17,7 @@ export class UsersService {
     constructor(
         @InjectModel(User) private userRepository: typeof User,
         private roleService: RolesService,
-        private fileService: FilesService
+        private fileService: FilesService,
     ) {
     }
 
@@ -36,6 +36,11 @@ export class UsersService {
 
     async getUserByEmail(email: string) {
         const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
+        return user
+    }
+
+    async getUserById(id: number) {
+        const user = await this.userRepository.findByPk(id, {include: {all: true}})
         return user
     }
 
@@ -113,5 +118,22 @@ export class UsersService {
             throw new HttpException('user not found', HttpStatus.NOT_FOUND)
         }
         return {...new ProfileUserDto(user)}
+    }
+
+    async updateEmail(email: string, userId: number) {
+        const user = await this.userRepository.findByPk(userId)
+
+        if (!user) {
+            throw new HttpException('user not found', HttpStatus.NOT_FOUND)
+        }
+        const userByEmail = await this.userRepository.findOne({where: {email}})
+
+        if (userByEmail) {
+            throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST)
+        }
+
+        user.email = email
+        await user.save()
+        return {...new UserResponseDto(user)}
     }
 }
