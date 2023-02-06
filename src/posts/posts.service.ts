@@ -210,4 +210,14 @@ export class PostsService {
             posts: posts.rows.map(post => new ReturnPostDto(post))
         }
     }
+
+    async getCommentsByUserId(userId: number) {
+        const comments = await this.commentRepository.findAndCountAll(
+            {where: {userId}, include: {all: true}, distinct:true}
+        )
+        return {
+            count: comments.count,
+            comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
 }

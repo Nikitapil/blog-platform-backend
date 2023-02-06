@@ -24,6 +24,7 @@ import {Comment} from "./comment.model";
 import {EditCommentDto} from "./dto/edit-comment.dto";
 import {User} from "../decorators/User.decorator";
 import {TUserTokenPayload} from "../types/common";
+import {ReturnCommentDto} from "./dto/return-comment.dto";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -77,7 +78,6 @@ export class PostsController {
     @ApiResponse({status: 200, type: [ReturnPostDto]})
     @Get('/user/likes/:id')
     getPostsByUserLikes(@Param('id') id: string) {
-        console.log(id)
         return this.postService.getPostsByUserLikes(+id)
     }
 
@@ -135,10 +135,17 @@ export class PostsController {
     }
 
     @ApiOperation({summary: 'get post comments'})
-    @ApiResponse({status: 200, type: [Comment]})
+    @ApiResponse({status: 200, type: [ReturnCommentDto]})
     @Get('/comment/:postId')
     getPostComments(@Param('postId') postId: string) {
         return this.postService.getPostComments(+postId)
+    }
+
+    @ApiOperation({summary: 'get post comments by user'})
+    @ApiResponse({status: 200, type: [ReturnCommentDto]})
+    @Get('/comment/user/:userId')
+    getPostCommentsByUser(@Param('userId') userId: string) {
+        return this.postService.getCommentsByUserId(+userId)
     }
 
     @ApiOperation({summary: 'edit post comment'})
