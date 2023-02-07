@@ -23,6 +23,9 @@ export class ReturnCommentDto {
     @ApiProperty({example: 'Nick', description: 'Comment author name'})
     author;
 
+    @ApiProperty({example: '123.jpg', description: 'UserAvatar'})
+    userAvatar;
+
     constructor(comment: Comment) {
         this.id = comment.id;
         this.text = comment.text;
@@ -30,6 +33,7 @@ export class ReturnCommentDto {
         this.postId = comment.postId;
         this.createdAt = comment.createdAt;
         this.updatedAt = comment.updatedAt;
-        this.author = comment.author.userName
+        this.author = comment.author.userName;
+        this.userAvatar = comment.author.avatar
     }
 }

@@ -24,6 +24,9 @@ export class ReturnPostDto {
     commentsCount;
     @ApiProperty({example: 10, description: 'Post views count'})
     viewsCount;
+    @ApiProperty({example: '123.jpg', description: 'UserAvatar'})
+    userAvatar;
+
     constructor(post: Post) {
         this.id = post.id;
         this.title = post.title;
@@ -36,5 +39,6 @@ export class ReturnPostDto {
         this.likesCount = post.likes.length;
         this.commentsCount = post.comments.length;
         this.viewsCount = post.views.length;
+        this.userAvatar = post.author.avatar || ''
     }
 }

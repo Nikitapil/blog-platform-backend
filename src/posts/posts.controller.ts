@@ -93,7 +93,6 @@ export class PostsController {
 
     @Get('/:id')
     getSinglePost(@Param('id') id: string, @User() user: TUserTokenPayload | null) {
-        console.log(user)
         return this.postService.getSinglePost(+id, user)
     }
 
