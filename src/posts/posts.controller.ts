@@ -72,8 +72,17 @@ export class PostsController {
     @Get('/posts_by_like')
     getPostsByLikes(@Query() query) {
         const page = +query.page || 1
-        const limit = query.limit || 10
+        const limit = query.limit || 5
         return this.postService.getPostsWithLikes(page, limit)
+    }
+
+    @ApiOperation({summary: 'Get all posts'})
+    @ApiResponse({status: 200, type: [ReturnPostDto]})
+    @Get('/posts_by_views')
+    getPostsByViews(@Query() query) {
+        const page = +query.page || 1
+        const limit = query.limit || 5
+        return this.postService.getPostsWithViews(page, limit)
     }
 
     @ApiOperation({summary: 'Get all posts by user'})

@@ -239,4 +239,23 @@ export class PostsService {
             posts: posts.rows.map(post => new ReturnPostDto(post))
         }
     }
+
+    async getPostsWithViews(page = 1, limit = 5) {
+        const offset = page * limit - limit
+        const posts = await this.postRepository.findAndCountAll(
+            {
+                attributes: {
+                    include: [
+                        [sequelize.literal('(SELECT COUNT(*) FROM views WHERE "postId" = "Post".id)'), 'viewsscount']
+                    ]
+                },
+                include: [{model: View, required: true},{all: true}], limit, offset,
+                distinct: true,
+                order: [[sequelize.literal('viewsscount'), 'DESC']]
+            })
+        return {
+            count: posts.count,
+            posts: posts.rows.map(post => new ReturnPostDto(post))
+        }
+    }
 }
