@@ -5,7 +5,7 @@ import {Post} from "./post.model";
 import {FilesService} from "../files/files.service";
 import {EditPostDto} from "./dto/edit-post-dto";
 import {ReturnPostDto} from "./dto/return-post-dto";
-import {Op} from "sequelize";
+import sequelize, {Op} from "sequelize";
 import {AddLikeDto} from "./dto/add-like.dto";
 import {Like} from "./like.model";
 import {AddCommentDto} from "./dto/add-comment.dto";
@@ -218,6 +218,25 @@ export class PostsService {
         return {
             count: comments.count,
             comments: comments.rows.map(comment => new ReturnCommentDto(comment))
+        }
+    }
+
+    async getPostsWithLikes(page = 1, limit = 5) {
+        const offset = page * limit - limit
+        const posts = await this.postRepository.findAndCountAll(
+            {
+                attributes: {
+                    include: [
+                        [sequelize.literal('(SELECT COUNT(*) FROM Likes WHERE "postId" = "Post".id)'), 'likescount']
+                    ]
+                },
+                include: [{model: Like, required: true},{all: true}], limit, offset,
+                distinct: true,
+                order: [[sequelize.literal('likescount'), 'DESC']]
+            })
+        return {
+            count: posts.count,
+            posts: posts.rows.map(post => new ReturnPostDto(post))
         }
     }
 }
