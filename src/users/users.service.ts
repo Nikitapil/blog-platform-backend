@@ -11,6 +11,7 @@ import { UserNameDto } from './dto/create-user.dto.ts/user-name.dto';
 import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import * as bcrypt from 'bcryptjs';
 import { ProfileUserDto } from './dto/create-user.dto.ts/profile-user-dto';
+import { UsersResponseDto } from './dto/create-user.dto.ts/users-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +31,7 @@ export class UsersService {
 
   async getAllUsers() {
     const users = await this.userRepository.findAll({ include: { all: true } });
-    return users;
+    return users.map((user) => new UsersResponseDto(user));
   }
 
   async getUserByEmail(email: string) {
