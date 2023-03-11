@@ -12,6 +12,7 @@ import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import * as bcrypt from 'bcryptjs';
 import { ProfileUserDto } from './dto/create-user.dto.ts/profile-user-dto';
 import { UsersResponseDto } from './dto/create-user.dto.ts/users-response.dto';
+import {UnbanUserDto} from "./dto/unban-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -67,7 +68,18 @@ export class UsersService {
     user.banned = true;
     user.banReason = dto.banReason;
     await user.save();
-    return user;
+    return new UsersResponseDto(user);
+  }
+
+  async unbanUser(dto: UnbanUserDto) {
+    const user = await this.userRepository.findByPk(dto.userId);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+    user.banned = false;
+    user.banReason = '';
+    await user.save();
+    return new UsersResponseDto(user);
   }
 
   async updateAvatar(image, userId) {
