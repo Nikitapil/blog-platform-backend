@@ -27,6 +27,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserNameDto } from './dto/create-user.dto.ts/user-name.dto';
 import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import { UserEmailDto } from './dto/create-user.dto.ts/user-email.dto';
+import {UnbanUserDto} from "./dto/unban-user.dto";
 
 @ApiTags('Users')
 @Controller('users')
@@ -73,6 +74,15 @@ export class UsersController {
   @Post('/ban')
   banUser(@Body() dto: BanUserDto) {
     return this.userService.banUser(dto);
+  }
+
+  @ApiOperation({ summary: 'Unban user' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
+  @Post('/unban')
+  unbanUser(@Body() dto: UnbanUserDto) {
+    return this.userService.unbanUser(dto);
   }
 
   @ApiOperation({ summary: 'Update Avatar' })
