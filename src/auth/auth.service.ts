@@ -83,6 +83,11 @@ export class AuthService {
       user.password
     );
     if (user && passwordEquals) {
+      if (user.banned) {
+        throw new UnauthorizedException({
+          message: `This profile is banned. Ban reason: ${user.banReason}`
+        });
+      }
       return user;
     }
     throw new UnauthorizedException({ message: 'Incorrect email or password' });
@@ -114,6 +119,11 @@ export class AuthService {
       }
 
       const user = await this.userService.getUserById(userData.id);
+      if (user.banned) {
+        throw new UnauthorizedException({
+          message: `This profile is banned. Ban reason: ${user.banReason}`
+        });
+      }
       const responseData = await this.generateToken(user);
       await this.saveToken(user.id, responseData.refreshToken);
       return responseData;

@@ -12,7 +12,7 @@ import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import * as bcrypt from 'bcryptjs';
 import { ProfileUserDto } from './dto/create-user.dto.ts/profile-user-dto';
 import { UsersResponseDto } from './dto/create-user.dto.ts/users-response.dto';
-import {UnbanUserDto} from "./dto/unban-user.dto";
+import { UnbanUserDto } from './dto/unban-user.dto';
 
 @Injectable()
 export class UsersService {
