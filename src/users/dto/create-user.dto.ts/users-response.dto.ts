@@ -17,5 +17,6 @@ export class UsersResponseDto {
     this.banned = user.banned;
     this.banReason = user.banReason;
     this.avatar = user.avatar;
+    this.roles = user.roles;
   }
 }

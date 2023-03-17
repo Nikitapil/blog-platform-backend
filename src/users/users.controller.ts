@@ -18,7 +18,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './users.model';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { AddRoleDto } from './dto/add-role-dto';
+import { ChangeRoleDto } from './dto/change-role-dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { ValidationPipe } from '../pipes/validation.pipe';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
@@ -27,7 +27,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserNameDto } from './dto/create-user.dto.ts/user-name.dto';
 import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import { UserEmailDto } from './dto/create-user.dto.ts/user-email.dto';
-import {UnbanUserDto} from "./dto/unban-user.dto";
+import { UnbanUserDto } from './dto/unban-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -63,8 +63,8 @@ export class UsersController {
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Post('/role')
-  addRole(@Body() dto: AddRoleDto) {
-    return this.userService.addRole(dto);
+  changeRoles(@Body() dto: ChangeRoleDto) {
+    return this.userService.changeRoles(dto);
   }
 
   @ApiOperation({ summary: 'Ban user' })

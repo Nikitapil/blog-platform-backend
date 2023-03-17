@@ -1,10 +1,10 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddRoleDto {
+export class ChangeRoleDto {
   @ApiProperty({ example: 'ADMIN', description: 'new user role' })
-  @IsString({ message: 'Value must be string' })
-  readonly value: string;
+  @IsArray({ message: 'Value must be string' })
+  readonly values: string[];
 
   @ApiProperty({ example: '1', description: 'user id' })
   @IsNumber({}, { message: 'userId must be number' })

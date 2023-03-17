@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.ts/create-user.dto';
 import { RolesService } from '../roles/roles.service';
-import { AddRoleDto } from './dto/add-role-dto';
+import { ChangeRoleDto } from './dto/change-role-dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { FilesService } from '../files/files.service';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -50,18 +50,28 @@ export class UsersService {
     return user;
   }
 
-  async addRole(dto: AddRoleDto) {
-    const user = await this.userRepository.findByPk(dto.userId);
-    const role = await this.roleService.getRole(dto.value);
-    if (role && user) {
-      await user.$add('role', role.id);
-      return dto;
+  async changeRoles(dto: ChangeRoleDto) {
+    let user = await this.userRepository.findByPk(dto.userId, {
+      include: { all: true }
+    });
+    const roles = await this.roleService.getRolesByValues(dto.values);
+    if (roles && user) {
+      await user.$set(
+        'roles',
+        roles.map((role) => role.id)
+      );
+      user = await this.userRepository.findByPk(dto.userId, {
+        include: { all: true }
+      });
+      return new UserResponseDto(user);
     }
     throw new HttpException('user or role not found', HttpStatus.NOT_FOUND);
   }
 
   async banUser(dto: BanUserDto) {
-    const user = await this.userRepository.findByPk(dto.userId);
+    const user = await this.userRepository.findByPk(dto.userId, {
+      include: { all: true }
+    });
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
@@ -72,7 +82,9 @@ export class UsersService {
   }
 
   async unbanUser(dto: UnbanUserDto) {
-    const user = await this.userRepository.findByPk(dto.userId);
+    const user = await this.userRepository.findByPk(dto.userId, {
+      include: { all: true }
+    });
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
