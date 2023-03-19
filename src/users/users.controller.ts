@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -47,8 +48,10 @@ export class UsersController {
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Get()
-  getAll() {
-    return this.userService.getAllUsers();
+  getAll(@Query() query) {
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    return this.userService.getAllUsers(page, limit);
   }
 
   @ApiOperation({ summary: 'Get single users' })

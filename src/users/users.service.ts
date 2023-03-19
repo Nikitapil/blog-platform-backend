@@ -30,9 +30,18 @@ export class UsersService {
     return user;
   }
 
-  async getAllUsers() {
-    const users = await this.userRepository.findAll({ include: { all: true } });
-    return users.map((user) => new UsersResponseDto(user));
+  async getAllUsers(page = 1, limit = 10) {
+    const offset = page * limit - limit;
+    const { count, rows } = await this.userRepository.findAndCountAll({
+      include: { all: true },
+      distinct: true,
+      limit,
+      offset
+    });
+    return {
+      count,
+      users: rows.map((user) => new UsersResponseDto(user))
+    };
   }
 
   async getUserByEmail(email: string) {
