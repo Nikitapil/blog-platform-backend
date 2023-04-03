@@ -105,7 +105,7 @@ export class PostsController {
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   deletePost(@Param('id') id: string, @Req() req) {
-    return this.postService.delete(+id, req.user.id);
+    return this.postService.delete(+id, req.user);
   }
 
   @ApiOperation({ summary: 'Get single post' })
@@ -185,6 +185,6 @@ export class PostsController {
   @Delete('/comment/:commentId')
   @UseGuards(JwtAuthGuard)
   deleteComment(@Param('commentId') commentId: string, @Req() req) {
-    return this.postService.deleteComment(+commentId, req.user.id);
+    return this.postService.deleteComment(+commentId, req.user);
   }
 }

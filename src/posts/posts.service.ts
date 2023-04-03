@@ -18,6 +18,7 @@ import { ReturnCommentDto } from './dto/return-comment.dto';
 import { EditCommentDto } from './dto/edit-comment.dto';
 import { TUserTokenPayload } from '../types/common';
 import { View } from './view.model';
+import { EUserRoles } from '../helpers/constants';
 
 @Injectable()
 export class PostsService {
@@ -79,12 +80,15 @@ export class PostsService {
     return post;
   }
 
-  async delete(id: number, userId) {
+  async delete(id: number, user: TUserTokenPayload) {
     const post = await this.postRepository.findOne({ where: { id } });
     if (!post) {
       throw new NotFoundException({ message: 'Post not found' });
     }
-    if (post.userId !== userId) {
+    if (
+      post.userId !== user.id &&
+      !user.roles.find((role) => role.value === EUserRoles.ADMIN)
+    ) {
       throw new ForbiddenException({ message: 'Forbidden' });
     }
     await this.postRepository.destroy({ where: { id } });
@@ -204,12 +208,15 @@ export class PostsService {
     };
   }
 
-  async deleteComment(id: number, userId: number) {
+  async deleteComment(id: number, user: TUserTokenPayload) {
     const comment = await this.commentRepository.findOne({ where: { id } });
     if (!comment) {
       throw new NotFoundException({ message: 'Comment not found' });
     }
-    if (comment.userId !== userId) {
+    if (
+      comment.userId !== user.id &&
+      !user.roles.find((role) => role.value === EUserRoles.ADMIN)
+    ) {
       throw new ForbiddenException({ message: 'UserId is not equal' });
     }
     await comment.destroy();
