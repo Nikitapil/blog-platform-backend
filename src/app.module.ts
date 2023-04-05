@@ -16,6 +16,8 @@ import { Token } from './auth/token.model';
 import { Like } from './posts/like.model';
 import { Comment } from './posts/comment.model';
 import { View } from './posts/view.model';
+import { HashTag } from './posts/hashtag.model';
+import { HashtagPost } from './posts/hashtag-post.model';
 @Module({
   controllers: [],
   providers: [],
@@ -33,7 +35,18 @@ import { View } from './posts/view.model';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRoles, Post, Token, Like, Comment, View],
+      models: [
+        User,
+        Role,
+        UserRoles,
+        Post,
+        Token,
+        Like,
+        Comment,
+        View,
+        HashTag,
+        HashtagPost
+      ],
       autoLoadModels: true
     }),
     UsersModule,

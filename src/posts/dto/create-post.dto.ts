@@ -12,4 +12,7 @@ export class CreatePostDto {
 
   @ApiProperty({ example: '1', description: 'Post author id' })
   readonly userId: number;
+
+  @ApiProperty({ example: '["hello", "soft"]', description: 'Hashtags array' })
+  readonly hashtags: string[];
 }

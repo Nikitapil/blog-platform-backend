@@ -1,5 +1,6 @@
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -12,6 +13,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Like } from './like.model';
 import { Comment } from './comment.model';
 import { View } from './view.model';
+import { HashtagPost } from './hashtag-post.model';
+import { HashTag } from './hashtag.model';
 
 interface PostCreationAttrs {
   title: string;
@@ -59,4 +62,7 @@ export class Post extends Model<Post, PostCreationAttrs> {
 
   @HasMany(() => View)
   views: View[];
+
+  @BelongsToMany(() => HashTag, () => HashtagPost)
+  hashtags: HashTag[];
 }

@@ -32,6 +32,8 @@ export class ReturnPostDto {
   viewsCount;
   @ApiProperty({ example: '123.jpg', description: 'UserAvatar' })
   userAvatar;
+  @ApiProperty({ example: '["hello", "soft"]', description: 'post hashtags' })
+  hashtags;
 
   constructor(post: Post) {
     this.id = post.id;
@@ -46,5 +48,6 @@ export class ReturnPostDto {
     this.commentsCount = post.comments.length;
     this.viewsCount = post.views.length;
     this.userAvatar = post.author.avatar || '';
+    this.hashtags = post.hashtags.map((hashtag) => hashtag.value);
   }
 }

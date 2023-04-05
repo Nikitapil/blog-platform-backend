@@ -19,6 +19,7 @@ import { EditCommentDto } from './dto/edit-comment.dto';
 import { TUserTokenPayload } from '../types/common';
 import { View } from './view.model';
 import { EUserRoles } from '../helpers/constants';
+import { HashTag } from './hashtag.model';
 
 @Injectable()
 export class PostsService {
@@ -27,6 +28,7 @@ export class PostsService {
     @InjectModel(Like) private likeRepository: typeof Like,
     @InjectModel(Comment) private commentRepository: typeof Comment,
     @InjectModel(View) private viewRepository: typeof View,
+    @InjectModel(HashTag) private hashTagRepository: typeof HashTag,
     private fileService: FilesService
   ) {}
 
@@ -36,6 +38,8 @@ export class PostsService {
       fileName = await this.fileService.createFile(image);
     }
     const post = await this.postRepository.create({ ...dto, image: fileName });
+    const hashtags = await this.createHashTags(dto.hashtags);
+    await post.$set('hashtags', hashtags);
     return post;
   }
 
@@ -314,5 +318,16 @@ export class PostsService {
       count: posts.count,
       posts: posts.rows.map((post) => new ReturnPostDto(post))
     };
+  }
+
+  private async createHashTags(values: string[]) {
+    await this.hashTagRepository.bulkCreate(
+      values.map((value) => ({ value })),
+      {
+        ignoreDuplicates: true,
+        returning: true
+      }
+    );
+    return await this.hashTagRepository.findAll({ where: { value: values } });
   }
 }
