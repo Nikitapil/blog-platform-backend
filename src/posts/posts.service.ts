@@ -84,6 +84,12 @@ export class PostsService {
       content: dto.content,
       image: fileName
     });
+
+    if (dto.hashtags) {
+      const hashtags = await this.createHashTags(dto.hashtags);
+      await post.$set('hashtags', hashtags);
+    }
+
     return post;
   }
 
@@ -99,7 +105,9 @@ export class PostsService {
       throw new ForbiddenException({ message: 'Forbidden' });
     }
     await this.postRepository.destroy({ where: { id } });
-    await this.fileService.deleteFile(post.image);
+    if (post.image) {
+      await this.fileService.deleteFile(post.image);
+    }
     return null;
   }
 
@@ -325,7 +333,7 @@ export class PostsService {
 
   private async createHashTags(values: string[]) {
     await this.hashTagRepository.bulkCreate(
-      values.map((value) => ({ value })),
+      [values].flat().map((value) => ({ value })),
       {
         ignoreDuplicates: true,
         returning: true
