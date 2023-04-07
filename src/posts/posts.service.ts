@@ -38,8 +38,11 @@ export class PostsService {
       fileName = await this.fileService.createFile(image);
     }
     const post = await this.postRepository.create({ ...dto, image: fileName });
-    const hashtags = await this.createHashTags(dto.hashtags);
-    await post.$set('hashtags', hashtags);
+    if (dto.hashtags) {
+      const hashtags = await this.createHashTags(dto.hashtags);
+      await post.$set('hashtags', hashtags);
+    }
+
     return post;
   }
 
