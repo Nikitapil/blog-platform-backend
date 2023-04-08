@@ -32,12 +32,16 @@ export class PostsService {
     private fileService: FilesService
   ) {}
 
-  async create(dto: CreatePostDto, image: any) {
+  async create(dto: CreatePostDto, userId: number, image: any) {
     let fileName = '';
     if (image) {
       fileName = await this.fileService.createFile(image);
     }
-    const post = await this.postRepository.create({ ...dto, image: fileName });
+    const post = await this.postRepository.create({
+      ...dto,
+      userId,
+      image: fileName
+    });
     if (dto.hashtags) {
       const hashtags = await this.createHashTags(dto.hashtags);
       await post.$set('hashtags', hashtags);

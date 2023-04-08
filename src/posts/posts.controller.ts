@@ -9,6 +9,7 @@ import {
   Put,
   Query,
   Req,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -41,10 +42,10 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   createPost(@Body() dto: CreatePostDto, @UploadedFile() image, @Req() req) {
-    if (req.user.id !== +dto.userId) {
-      throw new ForbiddenException({ message: 'UserId is not equal' });
+    if (!req.user.id) {
+      throw new UnauthorizedException('Need login first');
     }
-    return this.postService.create(dto, image);
+    return this.postService.create(dto, req.user.id, image);
   }
 
   @ApiOperation({ summary: 'Edit post' })
