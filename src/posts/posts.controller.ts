@@ -66,7 +66,9 @@ export class PostsController {
     const page = +query.page || 1;
     const limit = query.limit || 10;
     const search = query.search || '';
-    return this.postService.getPosts(page, limit, search);
+    const hashtag = query.tag || '';
+    console.log(hashtag, 'hashtag');
+    return this.postService.getPosts(page, limit, search, hashtag);
   }
 
   @ApiOperation({ summary: 'Get all posts' })

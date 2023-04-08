@@ -46,10 +46,14 @@ export class PostsService {
     return post;
   }
 
-  async getPosts(page = 1, limit = 10, search) {
+  async getPosts(page = 1, limit = 10, search: string, hashtag = '') {
     const offset = page * limit - limit;
+    const include: sequelize.Includeable[] = [{ all: true }];
+    if (hashtag) {
+      include.push({ model: HashTag, where: { value: hashtag } });
+    }
     const posts = await this.postRepository.findAndCountAll({
-      include: { all: true },
+      include,
       limit,
       offset,
       where: {
