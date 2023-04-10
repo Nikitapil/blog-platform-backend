@@ -19,10 +19,10 @@ export class HashtagPost extends Model<HashtagPost> {
   id: number;
 
   @ForeignKey(() => Post)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.INTEGER, onDelete: 'CASCADE' })
   postId: number;
 
   @ForeignKey(() => HashTag)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.INTEGER, onDelete: 'CASCADE' })
   hashTagId: string;
 }

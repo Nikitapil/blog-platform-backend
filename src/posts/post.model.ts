@@ -30,7 +30,8 @@ export class Post extends Model<Post, PostCreationAttrs> {
     type: DataType.INTEGER,
     unique: true,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    onDelete: 'CASCADE'
   })
   id: number;
 

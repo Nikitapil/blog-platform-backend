@@ -42,7 +42,7 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
 
   @ApiProperty({ example: '1', description: 'Post id' })
   @ForeignKey(() => Post)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.INTEGER, onDelete: 'CASCADE' })
   postId: string;
 
   @BelongsTo(() => User)

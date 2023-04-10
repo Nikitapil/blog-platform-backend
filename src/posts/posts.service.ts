@@ -96,6 +96,8 @@ export class PostsService {
     if (dto.hashtags) {
       const hashtags = await this.createHashTags(dto.hashtags);
       await post.$set('hashtags', hashtags);
+    } else {
+      await post.$set('hashtags', []);
     }
 
     return post;
