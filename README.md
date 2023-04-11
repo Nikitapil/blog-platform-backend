@@ -3,7 +3,7 @@
 Simple blog platform for writing and reading blog posts based on markdown.
 
 ## Technologies used: 
-NodeJs, NestJS, Postgres, Sequelize, Swagger, JWT, class-validator, eslint, prettier, typescript
+NodeJs, NestJS, PostgreSQL, Sequelize, Swagger, JWT, class-validator, eslint, prettier, typescript
 
 ## Starting guide:
 1. Clone this repo and install dependencies (```npm install```)
