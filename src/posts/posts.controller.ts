@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -64,12 +65,8 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [ReturnPostDto] })
   @Get()
   getPosts(@Query() query) {
-    const page = +query.page || 1;
-    const limit = query.limit || 10;
-    const search = query.search || '';
-    const hashtag = query.tag || '';
-    console.log(hashtag, 'hashtag');
-    return this.postService.getPosts(page, limit, search, hashtag);
+    const { page = 1, limit = 10, search = '', tag = '' } = query;
+    return this.postService.getPosts(+page, +limit, search, tag);
   }
 
   @ApiOperation({ summary: 'Get all posts' })
@@ -93,32 +90,32 @@ export class PostsController {
   @ApiOperation({ summary: 'Get all posts by user' })
   @ApiResponse({ status: 200, type: [ReturnPostDto] })
   @Get('/user/:id')
-  getPostsByUser(@Param('id') id: string) {
-    return this.postService.getPostsByUser(+id);
+  getPostsByUser(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.getPostsByUser(id);
   }
 
   @ApiOperation({ summary: 'Get all posts by user likes' })
   @ApiResponse({ status: 200, type: [ReturnPostDto] })
   @Get('/user/likes/:id')
-  getPostsByUserLikes(@Param('id') id: string) {
-    return this.postService.getPostsByUserLikes(+id);
+  getPostsByUserLikes(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.getPostsByUserLikes(id);
   }
 
   @ApiOperation({ summary: 'Delete post' })
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
-  deletePost(@Param('id') id: string, @Req() req) {
-    return this.postService.delete(+id, req.user);
+  deletePost(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    return this.postService.delete(id, req.user);
   }
 
   @ApiOperation({ summary: 'Get single post' })
   @ApiResponse({ status: 200, type: ReturnPostDto })
   @Get('/:id')
   getSinglePost(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @User() user: TUserTokenPayload | null
   ) {
-    return this.postService.getSinglePost(+id, user);
+    return this.postService.getSinglePost(id, user);
   }
 
   @ApiOperation({ summary: 'Add like' })
@@ -136,9 +133,9 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Like] })
   @Delete('/like/:postId')
   @UseGuards(JwtAuthGuard)
-  deleteLike(@Param('postId') postId: string, @Req() req) {
+  deleteLike(@Param('postId', ParseIntPipe) postId: number, @Req() req) {
     return this.postService.deleteLike({
-      postId: +postId,
+      postId: postId,
       userId: req.user.id
     });
   }
@@ -146,8 +143,8 @@ export class PostsController {
   @ApiOperation({ summary: 'Get post likes' })
   @ApiResponse({ status: 200, type: [Like] })
   @Get('/like/:postId')
-  getPostLikes(@Param('postId') postId: string) {
-    return this.postService.getPostLikes(+postId);
+  getPostLikes(@Param('postId', ParseIntPipe) postId: number) {
+    return this.postService.getPostLikes(postId);
   }
 
   @ApiOperation({ summary: 'Create new comment to post' })
@@ -164,15 +161,15 @@ export class PostsController {
   @ApiOperation({ summary: 'get post comments' })
   @ApiResponse({ status: 200, type: [ReturnCommentDto] })
   @Get('/comment/:postId')
-  getPostComments(@Param('postId') postId: string) {
-    return this.postService.getPostComments(+postId);
+  getPostComments(@Param('postId', ParseIntPipe) postId: number) {
+    return this.postService.getPostComments(postId);
   }
 
   @ApiOperation({ summary: 'get post comments by user' })
   @ApiResponse({ status: 200, type: [ReturnCommentDto] })
   @Get('/comment/user/:userId')
-  getPostCommentsByUser(@Param('userId') userId: string) {
-    return this.postService.getCommentsByUserId(+userId);
+  getPostCommentsByUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.postService.getCommentsByUserId(userId);
   }
 
   @ApiOperation({ summary: 'edit post comment' })
@@ -187,7 +184,10 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Comment] })
   @Delete('/comment/:commentId')
   @UseGuards(JwtAuthGuard)
-  deleteComment(@Param('commentId') commentId: string, @Req() req) {
-    return this.postService.deleteComment(+commentId, req.user);
+  deleteComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Req() req
+  ) {
+    return this.postService.deleteComment(commentId, req.user);
   }
 }
