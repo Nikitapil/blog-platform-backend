@@ -183,8 +183,8 @@ export class PostsService {
     return likes;
   }
 
-  async addComment(dto: AddCommentDto) {
-    await this.commentRepository.create({ ...dto });
+  async addComment(dto: AddCommentDto, userId: number) {
+    await this.commentRepository.create({ ...dto, userId });
     const comments = await this.commentRepository.findAndCountAll({
       where: { postId: dto.postId },
       include: { all: true },

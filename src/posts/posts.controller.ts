@@ -151,11 +151,14 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Comment] })
   @Post('/comment')
   @UseGuards(JwtAuthGuard)
-  addComment(@Body() dto: AddCommentDto, @Req() req) {
-    if (req.user.id !== +dto.userId) {
-      throw new ForbiddenException({ message: 'UserId is not equal' });
+  addComment(
+    @Body() dto: AddCommentDto,
+    @User() user: TUserTokenPayload | null
+  ) {
+    if (!user) {
+      throw new UnauthorizedException({ message: 'Need login first' });
     }
-    return this.postService.addComment(dto);
+    return this.postService.addComment(dto, user.id);
   }
 
   @ApiOperation({ summary: 'get post comments' })

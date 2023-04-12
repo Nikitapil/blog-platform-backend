@@ -2,9 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class AddCommentDto {
-  @ApiProperty({ example: '1', description: 'Comment author id' })
-  readonly userId: number;
-
   @ApiProperty({ example: '1', description: 'Comment post id' })
   readonly postId: number;
 
