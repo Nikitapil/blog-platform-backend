@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '../users/dto/create-user.dto.ts/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from '../users/dto/login-user-dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { Cookies } from '../decorators/Cookies.decorator';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -36,8 +37,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'logout' })
   @Get('/logout')
-  async logOut(@Req() req, @Res() res) {
-    const { refreshToken } = req.cookies;
+  async logOut(@Cookies('refreshToken') refreshToken: string, @Res() res) {
     const token = await this.authService.logOut(refreshToken);
     res.clearCookie('refreshToken');
     return res.json(token);
@@ -46,8 +46,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Check auth by refresh token' })
   @ApiResponse({ status: 200, type: AuthResponseDto })
   @Get('/refresh')
-  async refresh(@Req() req, @Res() res) {
-    const { refreshToken } = req.cookies;
+  async refresh(@Cookies('refreshToken') refreshToken: string, @Res() res) {
     const userData = await this.authService.refresh(refreshToken);
     res.cookie('refreshToken', userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
