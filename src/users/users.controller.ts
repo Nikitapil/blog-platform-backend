@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -54,11 +55,11 @@ export class UsersController {
     return this.userService.getAllUsers(page, limit);
   }
 
-  @ApiOperation({ summary: 'Get single users' })
+  @ApiOperation({ summary: 'Get single user' })
   @ApiResponse({ status: 200, type: User })
   @Get('/:id')
-  getUser(@Param('id') id: string) {
-    return this.userService.getUser(+id);
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.getUser(id);
   }
 
   @ApiOperation({ summary: 'add role to user' })
