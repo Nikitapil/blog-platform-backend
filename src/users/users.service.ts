@@ -115,10 +115,14 @@ export class UsersService {
   }
 
   async updateUsername(dto: UserNameDto, userId: number) {
-    const user = await this.userRepository.findByPk(userId);
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true }
+    });
+
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
+
     user.userName = dto.userName;
     await user.save();
     return { ...new UserResponseDto(user) };
