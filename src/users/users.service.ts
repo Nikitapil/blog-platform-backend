@@ -104,7 +104,9 @@ export class UsersService {
   }
 
   async updateAvatar(image, userId) {
-    const user = await this.userRepository.findByPk(userId);
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true }
+    });
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
@@ -129,7 +131,9 @@ export class UsersService {
   }
 
   async deleteAvatar(userId: number) {
-    const user = await this.userRepository.findByPk(userId);
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true }
+    });
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
@@ -140,7 +144,9 @@ export class UsersService {
   }
 
   async updatePassword(dto: UserPasswordDto, userId: number) {
-    const user = await this.userRepository.findByPk(userId);
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true }
+    });
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
@@ -163,7 +169,9 @@ export class UsersService {
   }
 
   async updateEmail(email: string, userId: number) {
-    const user = await this.userRepository.findByPk(userId);
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true }
+    });
 
     if (!user) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);
