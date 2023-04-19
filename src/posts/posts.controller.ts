@@ -42,11 +42,15 @@ export class PostsController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
-  createPost(@Body() dto: CreatePostDto, @UploadedFile() image, @Req() req) {
-    if (!req.user.id) {
+  createPost(
+    @Body() dto: CreatePostDto,
+    @UploadedFile() image: Express.Multer.File,
+    @User('id') userId: number
+  ): Promise<PostModel> {
+    if (!userId) {
       throw new UnauthorizedException('Need login first');
     }
-    return this.postService.create(dto, req.user.id, image);
+    return this.postService.create(dto, userId, image);
   }
 
   @ApiOperation({ summary: 'Edit post' })
@@ -54,11 +58,15 @@ export class PostsController {
   @Put()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
-  editPost(@Body() dto: EditPostDto, @UploadedFile() image, @Req() req) {
-    if (req.user.id !== +dto.userId) {
-      throw new ForbiddenException({ message: 'UserId is not equal' });
+  editPost(
+    @Body() dto: EditPostDto,
+    @UploadedFile() image,
+    @User('id') userId: number
+  ): Promise<PostModel> {
+    if (!userId) {
+      throw new ForbiddenException({ message: 'UserId is not valid' });
     }
-    return this.postService.edit(dto, image);
+    return this.postService.edit(dto, image, userId);
   }
 
   @ApiOperation({ summary: 'Get all posts' })

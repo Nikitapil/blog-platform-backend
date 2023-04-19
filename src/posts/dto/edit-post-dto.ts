@@ -19,9 +19,6 @@ export class EditPostDto {
   @IsString({ message: 'content must be string value' })
   readonly imageName: string;
 
-  @ApiProperty({ example: '1', description: 'Post author id' })
-  readonly userId: number;
-
   @ApiProperty({ example: '["hello", "soft"]', description: 'Hashtags array' })
   readonly hashtags: string[];
 }

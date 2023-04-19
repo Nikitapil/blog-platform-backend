@@ -32,7 +32,7 @@ export class PostsService {
     private fileService: FilesService
   ) {}
 
-  async create(dto: CreatePostDto, userId: number, image: any) {
+  async create(dto: CreatePostDto, userId: number, image: Express.Multer.File) {
     let fileName = '';
     if (image) {
       fileName = await this.fileService.createFile(image);
@@ -72,12 +72,12 @@ export class PostsService {
     };
   }
 
-  async edit(dto: EditPostDto, image) {
-    const post = await this.postRepository.findOne({ where: { id: +dto.id } });
+  async edit(dto: EditPostDto, image: Express.Multer.File, userId: number) {
+    const post = await this.postRepository.findOne({ where: { id: dto.id } });
     if (!post) {
       throw new NotFoundException({ message: 'Post not found' });
     }
-    if (post.userId !== +dto.userId) {
+    if (post.userId !== userId) {
       throw new ForbiddenException({ message: 'UserId is not equal' });
     }
     if (post.image && !image) {

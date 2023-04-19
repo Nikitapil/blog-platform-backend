@@ -2,9 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as uuid from 'uuid';
+
 @Injectable()
 export class FilesService {
-  async createFile(file): Promise<string> {
+  async createFile(file: Express.Multer.File): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg';
       const filePath = path.resolve(__dirname, '..', 'static');
@@ -21,7 +22,10 @@ export class FilesService {
     }
   }
 
-  async updateFile(file, fileName) {
+  async updateFile(
+    file: Express.Multer.File,
+    fileName: string
+  ): Promise<string> {
     try {
       let name = fileName;
       if (!name) {
@@ -41,7 +45,7 @@ export class FilesService {
     }
   }
 
-  async deleteFile(link: string) {
+  async deleteFile(link: string): Promise<void> {
     try {
       const filePath = path.join(__dirname, '..', 'static', link);
       fs.unlinkSync(filePath);

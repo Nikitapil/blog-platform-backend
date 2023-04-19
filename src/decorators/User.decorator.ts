@@ -15,6 +15,9 @@ export const User = createParamDecorator(
       const user = jwtService.verify(token, {
         secret: process.env.ACCESS_SECRET
       });
+      if (data) {
+        return user[data];
+      }
       return user;
     } catch (e) {
       return null;
