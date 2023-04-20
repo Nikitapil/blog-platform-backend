@@ -30,6 +30,7 @@ import { UserNameDto } from './dto/create-user.dto.ts/user-name.dto';
 import { UserPasswordDto } from './dto/create-user.dto.ts/user-password.dto';
 import { UserEmailDto } from './dto/create-user.dto.ts/user-email.dto';
 import { UnbanUserDto } from './dto/unban-user.dto';
+import { ReqUser } from '../decorators/req-user.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -94,16 +95,16 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('/update-avatar')
   @UseInterceptors(FileInterceptor('image'))
-  updateAvatar(@UploadedFile() image, @Req() req) {
-    return this.userService.updateAvatar(image, req.user?.id);
+  updateAvatar(@UploadedFile() image, @ReqUser('id') userId: number) {
+    return this.userService.updateAvatar(image, userId);
   }
 
   @ApiOperation({ summary: 'Delete Avatar' })
   @ApiResponse({ status: 200, type: UserResponseDto })
   @UseGuards(JwtAuthGuard)
   @Delete('/delete-avatar')
-  deleteAvatar(@Req() req) {
-    return this.userService.deleteAvatar(req.user?.id);
+  deleteAvatar(@ReqUser('id') userId: number) {
+    return this.userService.deleteAvatar(userId);
   }
 
   @ApiOperation({ summary: 'Update Username' })
@@ -120,8 +121,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @Put('/update-password')
-  updatePassword(@Body() dto: UserPasswordDto, @Req() req) {
-    return this.userService.updatePassword(dto, req.user?.id);
+  updatePassword(@Body() dto: UserPasswordDto, @ReqUser('id') userId: number) {
+    return this.userService.updatePassword(dto, userId);
   }
 
   @ApiOperation({ summary: 'Update Email' })
@@ -129,7 +130,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @Put('/update-email')
-  updateEmail(@Body() dto: UserEmailDto, @Req() req) {
-    return this.userService.updateEmail(dto.email, req.user?.id);
+  updateEmail(@Body() dto: UserEmailDto, @ReqUser('id') userId: number) {
+    return this.userService.updateEmail(dto.email, userId);
   }
 }
