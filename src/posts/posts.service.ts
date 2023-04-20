@@ -213,7 +213,7 @@ export class PostsService {
 
   async editComment(dto: EditCommentDto, userId: number) {
     const comment = await this.commentRepository.findOne({
-      where: { id: +dto.id }
+      where: { id: dto.id }
     });
     if (!comment) {
       throw new NotFoundException({ message: 'Comment not found' });

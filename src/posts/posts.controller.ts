@@ -2,15 +2,12 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Query,
-  Req,
-  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -154,14 +151,8 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Comment] })
   @Post('/comment')
   @UseGuards(JwtAuthGuard)
-  addComment(
-    @Body() dto: AddCommentDto,
-    @User() user: TUserTokenPayload | null
-  ) {
-    if (!user) {
-      throw new UnauthorizedException({ message: 'Need login first' });
-    }
-    return this.postService.addComment(dto, user.id);
+  addComment(@Body() dto: AddCommentDto, @ReqUser('id') userId: number) {
+    return this.postService.addComment(dto, userId);
   }
 
   @ApiOperation({ summary: 'get post comments' })
@@ -182,8 +173,8 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Comment] })
   @Put('/comment')
   @UseGuards(JwtAuthGuard)
-  editComment(@Body() dto: EditCommentDto, @Req() req) {
-    return this.postService.editComment(dto, req.user.id);
+  editComment(@Body() dto: EditCommentDto, @ReqUser('id') userId: number) {
+    return this.postService.editComment(dto, userId);
   }
 
   @ApiOperation({ summary: 'edit post comment' })
@@ -192,8 +183,8 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   deleteComment(
     @Param('commentId', ParseIntPipe) commentId: number,
-    @Req() req
+    @ReqUser() user: TUserTokenPayload
   ) {
-    return this.postService.deleteComment(commentId, req.user);
+    return this.postService.deleteComment(commentId, user);
   }
 }
