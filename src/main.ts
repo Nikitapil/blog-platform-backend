@@ -9,10 +9,8 @@ async function start() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*',
+    origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
     credentials: true
   });
 
