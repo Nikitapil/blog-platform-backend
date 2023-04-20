@@ -145,30 +145,30 @@ export class PostsService {
     }
   }
 
-  async addLike(dto: AddLikeDto) {
+  async addLike(dto: AddLikeDto, userId: number) {
     const candidate = await this.likeRepository.findOne({
-      where: { userId: dto.userId, postId: dto.postId }
+      where: { userId: userId, postId: dto.postId }
     });
     if (candidate) {
       throw new ForbiddenException({ message: 'Like already exists' });
     }
-    await this.likeRepository.create({ ...dto });
+    await this.likeRepository.create({ ...dto, userId });
     const likes = await this.likeRepository.findAndCountAll({
       where: { postId: dto.postId }
     });
     return likes;
   }
 
-  async deleteLike(dto: AddLikeDto) {
+  async deleteLike(postId: number, userId: number) {
     const like = await this.likeRepository.findOne({
-      where: { userId: dto.userId, postId: dto.postId }
+      where: { userId, postId }
     });
     if (!like) {
       throw new NotFoundException({ message: 'Like not found' });
     }
     await like.destroy();
     const likes = await this.likeRepository.findAndCountAll({
-      where: { postId: dto.postId }
+      where: { postId }
     });
     return likes;
   }

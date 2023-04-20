@@ -128,22 +128,19 @@ export class PostsController {
   @ApiResponse({ status: 200, type: [Like] })
   @Post('/like')
   @UseGuards(JwtAuthGuard)
-  addLike(@Body() dto: AddLikeDto, @Req() req) {
-    if (req.user.id !== +dto.userId) {
-      throw new ForbiddenException({ message: 'UserId is not equal' });
-    }
-    return this.postService.addLike(dto);
+  addLike(@Body() dto: AddLikeDto, @ReqUser('id') userId: number) {
+    return this.postService.addLike(dto, userId);
   }
 
   @ApiOperation({ summary: 'Delete like' })
   @ApiResponse({ status: 200, type: [Like] })
   @Delete('/like/:postId')
   @UseGuards(JwtAuthGuard)
-  deleteLike(@Param('postId', ParseIntPipe) postId: number, @Req() req) {
-    return this.postService.deleteLike({
-      postId: postId,
-      userId: req.user.id
-    });
+  deleteLike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @ReqUser('id') userId: number
+  ) {
+    return this.postService.deleteLike(postId, userId);
   }
 
   @ApiOperation({ summary: 'Get post likes' })
