@@ -18,6 +18,8 @@ import { Comment } from './posts/comment.model';
 import { View } from './posts/view.model';
 import { HashTag } from './posts/hashtag.model';
 import { HashtagPost } from './posts/hashtag-post.model';
+import * as pg from 'pg';
+
 @Module({
   controllers: [],
   providers: [],
@@ -28,6 +30,7 @@ import { HashtagPost } from './posts/hashtag-post.model';
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
+      dialectModule: pg,
       host: process.env.POSTGRES_HOST,
       port: Number(process.env.POSTGRES_PORT),
       username: process.env.POSTGRES_USER,
