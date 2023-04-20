@@ -31,6 +31,7 @@ import { EditCommentDto } from './dto/edit-comment.dto';
 import { User } from '../decorators/User.decorator';
 import { TUserTokenPayload } from '../types/common';
 import { ReturnCommentDto } from './dto/return-comment.dto';
+import { ReqUser } from '../decorators/req-user.decorator';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -45,11 +46,8 @@ export class PostsController {
   createPost(
     @Body() dto: CreatePostDto,
     @UploadedFile() image: Express.Multer.File,
-    @User('id') userId: number
+    @ReqUser('id') userId: number
   ): Promise<PostModel> {
-    if (!userId) {
-      throw new UnauthorizedException('Need login first');
-    }
     return this.postService.create(dto, userId, image);
   }
 
@@ -60,12 +58,9 @@ export class PostsController {
   @UseInterceptors(FileInterceptor('image'))
   editPost(
     @Body() dto: EditPostDto,
-    @UploadedFile() image,
-    @User('id') userId: number
+    @UploadedFile() image: Express.Multer.File,
+    @ReqUser('id') userId: number
   ): Promise<PostModel> {
-    if (!userId) {
-      throw new ForbiddenException({ message: 'UserId is not valid' });
-    }
     return this.postService.edit(dto, image, userId);
   }
 
@@ -112,8 +107,11 @@ export class PostsController {
   @ApiOperation({ summary: 'Delete post' })
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
-  deletePost(@Param('id', ParseIntPipe) id: number, @Req() req) {
-    return this.postService.delete(id, req.user);
+  deletePost(
+    @Param('id', ParseIntPipe) id: number,
+    @ReqUser() user: TUserTokenPayload
+  ) {
+    return this.postService.delete(id, user);
   }
 
   @ApiOperation({ summary: 'Get single post' })
