@@ -22,9 +22,7 @@ import { HashtagPost } from './posts/hashtag-post.model';
   controllers: [],
   providers: [],
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: `.${process.env.NODE_ENV}.env`
-    }),
+    ConfigModule.forRoot({}),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static')
     }),
