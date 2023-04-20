@@ -8,7 +8,11 @@ async function start() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    credentials: true
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Blog platform')
