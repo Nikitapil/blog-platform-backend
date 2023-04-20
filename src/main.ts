@@ -3,14 +3,15 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from './pipes/validation.pipe';
 import cookieParser from 'cookie-parser';
+import * as process from "process";
 
 async function start() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: true,
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowedHeaders: ['content-type'],
+    origin: process.env.CLIENT_URL,
     credentials: true
   });
 
